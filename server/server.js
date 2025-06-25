@@ -19,7 +19,9 @@ console.log(PORT);
 
 app.use(express.json());
 app.use(cors());
-app.use(helmet()); // helmet is a security middleware that helps you protect your app by setting various HTTP protocol
+app.use(helmet({
+    contentSecurityPolicy: false,
+})); // helmet is a security middleware that helps you protect your app by setting various HTTP protocol
 app.use(morgan("dev")); // log the request
 
 // apply arcjet rate limit to all routes
@@ -55,7 +57,7 @@ app.use(async (req , res , next) => {
 
 app.use("/api/products", productRoutes);
 
-if(process.env.NODE_ENV==="production") {
+if(process.env.NODE_ENV==="development") {
     app.use(express.static(path.join(__dirname,"/client/dist")))
 
     app.get("*", (req,res) => {
