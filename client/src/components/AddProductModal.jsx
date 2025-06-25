@@ -1,35 +1,26 @@
-import {
-  DollarSignIcon,
-  ImageIcon,
-  Package2Icon,
-  PlusCircleIcon,
-} from "lucide-react";
+import { DollarSignIcon, ImageIcon, Package2Icon, PlusCircleIcon } from "lucide-react";
 import { useProductStore } from "../store/useProductStore";
 
-const AddProductModel = () => {
-
+function AddProductModal() {
   const { addProduct, formData, setFormData, loading } = useProductStore();
-  
+
   return (
     <dialog id="add_product_modal" className="modal">
       <div className="modal-box">
-        {/* Close Button */}
+        {/* CLOSE BUTTON */}
         <form method="dialog">
-          <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
-            X
-          </button>
+          <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">X</button>
         </form>
-        {/* Modal Header */}
-        <h3 className="font-bold text-xl mb-8">Add New Products</h3>
+
+        {/* MODAL HEADER */}
+        <h3 className="font-bold text-xl mb-8">Add New Product</h3>
 
         <form onSubmit={addProduct} className="space-y-6">
           <div className="grid gap-6">
-            {/* Product Name Input */}
+            {/* PRODUCT NAME INPUT */}
             <div className="form-control">
               <label className="label">
-                <span className="label-text text-base font-medium">
-                  Product Name
-                </span>
+                <span className="label-text text-base font-medium">Product Name</span>
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
@@ -40,15 +31,12 @@ const AddProductModel = () => {
                   placeholder="Enter product name"
                   className="input input-bordered w-full pl-10 py-3 focus:input-primary transition-colors duration-200"
                   value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 />
               </div>
             </div>
 
-            {/* Product Price Input */}
-
+            {/* PRODUCT PRICE INPUT */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text text-base font-medium">Price</span>
@@ -64,19 +52,15 @@ const AddProductModel = () => {
                   placeholder="0.00"
                   className="input input-bordered w-full pl-10 py-3 focus:input-primary transition-colors duration-200"
                   value={formData.price}
-                  onChange={(e) =>
-                    setFormData({ ...formData, price: e.target.value })
-                  }
+                  onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                 />
               </div>
             </div>
-            {/* Product Image */}
 
+            {/* PRODUCT IMAGE */}
             <div className="form-control">
               <label className="label">
-                <span className="label-text text-base font-medium">
-                  Image URL
-                </span>
+                <span className="label-text text-base font-medium">Image URL</span>
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-base-content/50">
@@ -87,9 +71,7 @@ const AddProductModel = () => {
                   placeholder="https://example.com/image.jpg"
                   className="input input-bordered w-full pl-10 py-3 focus:input-primary transition-colors duration-200"
                   value={formData.image}
-                  onChange={(e) =>
-                    setFormData({ ...formData, image: e.target.value })
-                  }
+                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
                 />
               </div>
             </div>
@@ -115,11 +97,8 @@ const AddProductModel = () => {
               )}
             </button>
           </div>
-
         </form>
       </div>
-
-      
 
       {/* BACKDROP */}
       <form method="dialog" className="modal-backdrop">
@@ -127,6 +106,5 @@ const AddProductModel = () => {
       </form>
     </dialog>
   );
-};
-
-export default AddProductModel;
+}
+export default AddProductModal;

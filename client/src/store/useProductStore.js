@@ -1,70 +1,101 @@
-import { create } from 'zustand';
-import axios from 'axios';
-import {toast} from "react-hot-toast"
+import { create } from "zustand";
+import axios from "axios";
+import { toast } from "react-hot-toast";
 
-const BASE_URL = 'http://localhost:3000'
+const BASE_URL = "http://localhost:3000";
 
-export const useProductStore = create( (  set,get) => ({
-    products:[],
-    loading:false,
-    error:null,
+export const useProductStore = create((set, get) => ({
+  products: [],
+  loading: false,
+  error: null,
+  currentProduct: null,
 
+  // form state
+  formData: {
+    name: "",
+    price: "",
+    image: "",
+  },
 
-// form state
-formData : {
-  name : "",
-  price : "",
-  image : "",
-},
+  setFormData: (formData) => set({ formData }),
+  resetForm: () => set({ formData: { name: "", price: "", image: "" } }),
 
-setFormData : (formData) => set({ formData }),
-resetForm : () => set({ formData : { name: "", price: "", image: "" } }),
+  addProduct: async (e) => {
+    e.preventDefault();
+    set({ loading: true });
 
-addProduct : async(e) => {
-  e.preventDefault();
-  set ({ loading : true });
+    try {
+      const { formData } = get();
+      await axios.post(`${BASE_URL}/api/products`, formData);
+      await get().fetchProducts();
+      get().resetForm();
+      toast.success("Product added successfully");
+      document.getElementById("add_product_modal").close();
+    } catch (error) {
+      console.log("Error in addProduct function", error);
+      toast.error("Something went wrong ");
+    } finally {
+      set({ loading: false });
+    }
+  },
 
-  try {
-    const {formData} = get()
-    await axios.post(`${BASE_URL}/api/products`, formData)
-    await get().fetchProducts();
-    get().resetForm();
-    toast.success("Product added successfully");
-    document.getElementById("add_product_modal").close();
-  } catch (error) {
-    console.log("Error in addProduct function" , error);
-    toast.error("Something went wrong ");
-  } finally {
-    set({ loading : false });
-  }
-},
+  fetchProducts: async () => {
+    set({ loading: true });
+    try {
+      const response = await axios.get(`${BASE_URL}/api/products`);
+      set({ products: response.data.data, error: null });
+    } catch (error) {
+      if (error.status == 429)
+        set({ error: "Rate limit exceeded", products: [] });
+      else set({ error: "Something went wrong" });
+    } finally {
+      set({ loading: false });
+    }
+  },
 
-fetchProducts : async () => {
-  set({loading:true});
-  try {
-    const response =  await axios.get(`${BASE_URL}/api/products`)
-    set ({products:response.data.data,error:null})
-  } catch (error) {
-    if(error.status == 429) set({error:"Rate limit exceeded" , products : []})
-      else set({error: "Something went wrong"})
-  } finally {
-    set({loading:false})
-  }
-
-},
-
-deleteProduct : async (id) => {
-    set({ loading : true });
+  deleteProduct: async (id) => {
+    set({ loading: true });
     try {
       await axios.delete(`${BASE_URL}/api/products/${id}`);
-      set(prev => ({products : prev.products.filter(product => product.id !== id )}))
+      set((prev) => ({
+        products: prev.products.filter((product) => product.id !== id),
+      }));
       toast.success("Product deleted successfully");
     } catch (error) {
-      console.log("Error in deleteProduct function",error);
-      toast.error("Something went wrong")
+      console.log("Error in deleteProduct function", error);
+      toast.error("Something went wrong");
     }
-  }
+  },
 
-  })) ;
-
-
+  fetchProduct: async (id) => {
+    set({ loading: true });
+    try {
+      const response = await axios.get(`${BASE_URL}/api/products/${id}`);
+      set({
+        currentProduct: response.data.data,
+        formData: response.data.data,
+        error: null,
+      });
+    } catch (error) {
+      console.log("Error is fetchProduct function", error);
+      set({ error: "Something went wrong", currentProduct: null });
+    } finally {
+      set({ loading: false });
+    }
+  },
+  updateProduct: async (id) => {
+    set({ loading: true });
+    try {
+      const { formData } = get();
+      const response = await axios.put(
+        `${BASE_URL}/api/products/${id}`,
+        formData
+      );
+      set({ currentProduct: response.data.data });
+      toast.success(("Product updated succesfully"));
+    } catch (error) {
+      toast.error("Something went wrong");
+      console("Error in updateProduct function ", error);
+    }
+  },
+}));
