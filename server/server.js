@@ -15,7 +15,6 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const __dirname = path.resolve();
 
-console.log(PORT);
 
 app.use(express.json());
 app.use(cors());
